@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update Menu - Meal Mate</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { background: #f8fafc; color: #0f172a; min-height: 100vh; padding: 2rem 1.5rem; }
+        .container { max-width: 1100px; margin: 0 auto; }
+        .back-link { display: inline-block; font-size: 0.85rem; font-weight: 700; color: #64748b; text-decoration: none; margin-bottom: 1.25rem; }
+        .back-link:hover { color: #0f172a; }
+        
+        .layout-grid { display: grid; grid-template-columns: 360px 1fr; gap: 2rem; align-items: start; }
+        @media (max-width: 868px) { .layout-grid { grid-template-columns: 1fr; } }
+
+        .card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 18px; padding: 1.75rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.03); }
+        h2 { font-size: 1.35rem; font-weight: 800; color: #0f172a; margin-bottom: 1.25rem; }
+
+        .form-group { margin-bottom: 1.15rem; }
+        label { display: block; font-size: 0.825rem; font-weight: 700; color: #334155; margin-bottom: 0.4rem; }
+        input[type="text"], input[type="number"], input[type="url"], textarea {
+            width: 100%; padding: 0.65rem 0.85rem; border: 1px solid #cbd5e1; border-radius: 10px; font-size: 0.9rem; outline: none; background: #f8fafc;
+        }
+        input:focus, textarea:focus { border-color: #4f46e5; background: #ffffff; box-shadow: 0 0 0 4px rgba(79,70,229,0.12); }
+        
+        .checkbox-group { display: flex; align-items: center; gap: 0.6rem; margin: 1.25rem 0; }
+        .checkbox-group input { width: 18px; height: 18px; accent-color: #4f46e5; cursor: pointer; }
+        .checkbox-group label { margin-bottom: 0; font-weight: 600; font-size: 0.9rem; cursor: pointer; }
+
+        button { width: 100%; padding: 0.8rem; background: #4f46e5; color: #fff; border: none; border-radius: 10px; font-size: 0.9rem; font-weight: 700; cursor: pointer; transition: 0.2s ease; box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2); }
+        button:hover { background: #4338ca; }
+
+        .table-card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 18px; overflow-x: auto; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.03); }
+        table { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.875rem; }
+        th { background: #f8fafc; color: #64748b; font-weight: 700; text-transform: uppercase; font-size: 0.725rem; letter-spacing: 0.05em; padding: 1rem; border-bottom: 1px solid #e2e8f0; }
+        td { padding: 1rem; border-bottom: 1px solid #f1f5f9; vertical-align: middle; }
+        .thumb { width: 48px; height: 48px; object-fit: cover; border-radius: 8px; background: #f1f5f9; }
+        .badge-veg { color: #15803d; background: #dcfce7; padding: 0.25rem 0.55rem; border-radius: 6px; font-size: 0.75rem; font-weight: 700; }
+        .badge-nonveg { color: #b91c1c; background: #fee2e2; padding: 0.25rem 0.55rem; border-radius: 6px; font-size: 0.75rem; font-weight: 700; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="javascript:history.back()" class="back-link">← Back</a>
+
+        <div class="layout-grid">
+            <!-- Add Item Form -->
+            <div class="card">
+                <h2>Add Menu Item</h2>
+                <form action="{% url 'update_menu' restaurant.id %}" method="post">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="name">Item Name</label>
+                        <input type="text" id="name" name="name" placeholder="e.g. Cheese Pizza" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="description">Description</label>
+                        <textarea id="description" name="description" rows="2" placeholder="Ingredients and details..." required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="price">Price (₹)</label>
+                        <input type="number" id="price" name="price" step="0.01" placeholder="299.00" required>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="vegeterian" name="vegeterian">
+                        <label for="vegeterian">Vegetarian</label>
+                    </div>
+                    <div class="form-group">
+                        <label for="picture">Image URL</label>
+                        <input type="url" id="picture" name="picture" placeholder="https://...">
+                    </div>
+                    <button type="submit">Add to Menu</button>
+                </form>
+            </div>
+
+            <!-- Menu Table -->
+            <div class="table-card">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Item Name</th>
+                            <th>Picture</th>
+                            <th>Description</th>
+                            <th>Price</th>
+                            <th>Diet</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in itemList %}
+                        <tr>
+                            <td><strong>{{ item.name }}</strong></td>
+                            <td>
+                                <img src="{{ item.picture }}" alt="{{ item.name }}" class="thumb" onerror="this.src='https://placehold.co/80x80?text=Food'">
+                            </td>
+                            <td style="color: #64748b; max-width: 200px;">{{ item.description }}</td>
+                            <td><strong>₹{{ item.price }}</strong></td>
+                            <td>
+                                {% if item.vegeterian %}
+                                    <span class="badge-veg">Veg</span>
+                                {% else %}
+                                    <span class="badge-nonveg">Non-Veg</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" style="text-align: center; color: #94a3b8; padding: 3rem;">No menu items added yet.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

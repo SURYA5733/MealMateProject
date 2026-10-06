@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome - Meal Mate</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
+        body {
+            background: radial-gradient(circle at top left, #eef2ff, #f8fafc);
+            color: #0f172a;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+        }
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid #e2e8f0;
+            border-radius: 24px;
+            padding: 3rem 2.25rem;
+            max-width: 420px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
+        }
+        .brand-badge {
+            width: 72px;
+            height: 72px;
+            background: #e0e7ff;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.25rem;
+            margin: 0 auto 1.25rem auto;
+            box-shadow: inset 0 2px 4px rgba(255,255,255,0.8);
+        }
+        h1 { font-size: 2rem; font-weight: 800; color: #0f172a; letter-spacing: -0.025em; margin-bottom: 0.25rem; }
+        p.tagline { color: #64748b; font-weight: 500; margin-bottom: 2.25rem; font-size: 0.95rem; }
+        .section-box {
+            background: #f8fafc;
+            border: 1px solid #f1f5f9;
+            border-radius: 16px;
+            padding: 1.25rem;
+            margin-bottom: 1.25rem;
+            transition: all 0.2s ease;
+        }
+        .section-box:hover { border-color: #cbd5e1; transform: translateY(-1px); }
+        .label { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: #64748b; letter-spacing: 0.08em; margin-bottom: 0.75rem; }
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 0.85rem 1.25rem;
+            border-radius: 12px;
+            font-size: 0.925rem;
+            font-weight: 600;
+            text-decoration: none;
+            text-align: center;
+            transition: all 0.2s ease;
+        }
+        .btn-primary { background: #4f46e5; color: #ffffff; box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25); }
+        .btn-primary:hover { background: #4338ca; box-shadow: 0 6px 16px rgba(79, 70, 229, 0.35); }
+        .btn-secondary { background: #ffffff; color: #334155; border: 1px solid #cbd5e1; }
+        .btn-secondary:hover { background: #f1f5f9; border-color: #94a3b8; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="brand-badge">🍽️</div>
+        <h1>Meal Mate</h1>
+        <p class="tagline">Your favorite meals, delivered fast.</p>
+
+        <div class="section-box">
+            <div class="label">New to Meal Mate?</div>
+            <a href="open_signup" class="btn btn-primary">Create Account</a>
+        </div>
+
+        <div class="section-box">
+            <div class="label">Returning Customer?</div>
+            <a href="open_signin" class="btn btn-secondary">Sign In</a>
+        </div>
+    </div>
+</body>
+</html>

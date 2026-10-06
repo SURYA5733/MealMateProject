@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - Meal Mate</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { background: radial-gradient(circle at top left, #eef2ff, #f8fafc); color: #0f172a; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 2rem 1.5rem; }
+        .card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 24px; padding: 2.5rem 2rem; max-width: 460px; width: 100%; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05); }
+        .header { text-align: center; margin-bottom: 1.75rem; }
+        .header h3 { font-size: 1.75rem; font-weight: 800; color: #0f172a; margin-bottom: 0.35rem; }
+        .header p.subtitle { color: #64748b; font-size: 0.9rem; }
+        .form-group { margin-bottom: 1.15rem; }
+        label { display: block; font-size: 0.825rem; font-weight: 700; color: #334155; margin-bottom: 0.4rem; }
+        input, textarea { width: 100%; padding: 0.7rem 0.9rem; border: 1px solid #cbd5e1; border-radius: 12px; font-size: 0.9rem; outline: none; transition: all 0.2s; background: #f8fafc; }
+        input:focus, textarea:focus { border-color: #4f46e5; background: #ffffff; box-shadow: 0 0 0 4px rgba(79,70,229,0.12); }
+        button { width: 100%; padding: 0.85rem; background: #4f46e5; color: #fff; border: none; border-radius: 12px; font-size: 0.95rem; font-weight: 700; cursor: pointer; transition: all 0.2s ease; margin-top: 0.5rem; box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25); }
+        button:hover { background: #4338ca; transform: translateY(-1px); }
+        .footer-link { text-align: center; margin-top: 1.5rem; font-size: 0.875rem; color: #64748b; }
+        .footer-link a { color: #4f46e5; text-decoration: none; font-weight: 700; }
+        .footer-link a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="header">
+            <h3>Create an Account</h3>
+            <p class="subtitle">Join Meal Mate for easy food delivery</p>
+        </div>
+
+        <form action="{% url 'signup' %}" method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label>Username</label>
+                <input type="text" name="username" placeholder="johndoe" required>
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" name="password" placeholder="••••••••" required>
+            </div>
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" name="email" placeholder="john@example.com" required>
+            </div>
+            <div class="form-group">
+                <label>Mobile</label>
+                <input type="tel" name="mobile" placeholder="+1 234 567 890" required>
+            </div>
+            <div class="form-group">
+                <label>Address</label>
+                <textarea name="address" rows="2" placeholder="Street address, Apt, City..." required></textarea>
+            </div>
+            <button type="submit">Create Account</button>
+        </form>
+
+        <div class="footer-link">
+            Already have an account? <a href="open_signin">Sign In</a>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Restaurants - Meal Mate</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { background: #f8fafc; color: #0f172a; min-height: 100vh; }
+        .navbar { background: #ffffff; border-bottom: 1px solid #e2e8f0; padding: 1.25rem 2rem; display: flex; align-items: center; justify-content: space-between; }
+        .logo { font-size: 1.35rem; font-weight: 800; color: #4f46e5; text-decoration: none; }
+        .container { max-width: 1100px; margin: 2rem auto; padding: 0 1.5rem; }
+        .top-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.75rem; }
+        h2 { font-size: 1.6rem; font-weight: 800; color: #0f172a; }
+        .btn-add { background: #4f46e5; color: #fff; text-decoration: none; padding: 0.7rem 1.25rem; border-radius: 10px; font-size: 0.9rem; font-weight: 700; box-shadow: 0 4px 12px rgba(79,70,229,0.25); transition: 0.2s; }
+        .btn-add:hover { background: #4338ca; }
+        
+        .table-card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.03); }
+        table { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.9rem; }
+        th { background: #f8fafc; color: #64748b; font-weight: 700; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.05em; padding: 1rem 1.25rem; border-bottom: 1px solid #e2e8f0; }
+        td { padding: 1rem 1.25rem; border-bottom: 1px solid #f1f5f9; vertical-align: middle; }
+        tr:hover { background: #fafafa; }
+        .img-thumb { width: 54px; height: 54px; object-fit: cover; border-radius: 10px; background: #e2e8f0; display: block; }
+        .badge { display: inline-block; padding: 0.3rem 0.65rem; border-radius: 8px; font-size: 0.8rem; font-weight: 700; }
+        .badge-cuisine { background: #f1f5f9; color: #334155; }
+        .badge-rating { background: #fef3c7; color: #92400e; }
+        
+        .action-links { display: flex; gap: 0.5rem; align-items: center; }
+        .action-links a { text-decoration: none; font-size: 0.8rem; font-weight: 700; padding: 0.45rem 0.75rem; border-radius: 8px; transition: all 0.2s; }
+        .link-edit { color: #4338ca; background: #e0e7ff; }
+        .link-edit:hover { background: #c7d2fe; }
+        .link-menu { color: #0284c7; background: #e0f2fe; }
+        .link-menu:hover { background: #bae6fd; }
+        .link-delete { color: #b91c1c; background: #fee2e2; }
+        .link-delete:hover { background: #fca5a5; }
+    </style>
+</head>
+<body>
+    <header class="navbar">
+        <a href="open_show_restaurant" class="logo">🍽️ Meal Mate Admin</a>
+    </header>
+
+    <main class="container">
+        <div class="top-bar">
+            <h2>Partner Restaurants</h2>
+            <a href="open_add_restaurant" class="btn-add">+ Add Restaurant</a>
+        </div>
+
+        <div class="table-card">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Restaurant</th>
+                        <th>Picture</th>
+                        <th>Cuisine</th>
+                        <th>Rating</th>
+                        <th>Operations</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for r in restaurantList %}
+                    <tr>
+                        <td><strong>{{ r.name }}</strong></td>
+                        <td>
+                            <img src="{{ r.picture }}" alt="{{ r.name }}" class="img-thumb" onerror="this.src='https://placehold.co/100x100?text=Food'">
+                        </td>
+                        <td><span class="badge badge-cuisine">{{ r.cuisine }}</span></td>
+                        <td><span class="badge badge-rating">★ {{ r.rating }}</span></td>
+                        <td>
+                            <div class="action-links">
+                                <a href="{% url 'open_update_restaurant' r.id %}" class="link-edit">Update Info</a>
+                                <a href="{% url 'open_update_menu' r.id %}" class="link-menu">Update Menu</a>
+                                <a href="{% url 'delete_restaurant' r.id %}" class="link-delete" onclick="return confirm('Delete this restaurant?')">Delete</a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" style="text-align: center; color: #94a3b8; padding: 3rem;">No restaurants found. Add your first partner above!</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </main>
+</body>
+</html>
