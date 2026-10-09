@@ -3,21 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">    
-    <title>Order Summary</title>
+    <title>Order Confirmed - MealMate</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { background: radial-gradient(circle at top left, #eef2ff, #f8fafc); color: #0f172a; min-height: 100vh; padding: 3rem 1.5rem; display: flex; align-items: center; justify-content: center; }
+        .container { max-width: 520px; width: 100%; margin: 0 auto; }
+        .card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 24px; padding: 2.5rem; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05); text-align: center; }
+        .success-badge { font-size: 3.5rem; margin-bottom: 1rem; animation: pop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        @keyframes pop { 0% { transform: scale(0.5); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+        h1 { font-size: 1.6rem; font-weight: 800; color: #0f172a; margin-bottom: 0.5rem; }
+        .subtitle { color: #64748b; font-size: 0.95rem; margin-bottom: 1.5rem; }
+        .info-box { background: #f8fafc; border: 1px solid #f1f5f9; border-radius: 16px; padding: 1.25rem; margin-bottom: 1.5rem; text-align: left; }
+        .info-title { font-size: 0.75rem; font-weight: 800; text-transform: uppercase; color: #64748b; letter-spacing: 0.05em; margin-bottom: 0.5rem; }
+        .info-content { font-size: 0.95rem; font-weight: 600; color: #334155; }
+        .btn-action { display: inline-flex; align-items: center; justify-content: center; width: 100%; padding: 0.9rem; background: #4f46e5; color: #ffffff; text-decoration: none; border-radius: 12px; font-weight: 700; font-size: 0.95rem; transition: all 0.2s ease; box-shadow: 0 4px 14px rgba(79, 70, 229, 0.3); }
+        .btn-action:hover { background: #4338ca; transform: translateY(-1px); }
+    </style>
 </head>
 <body>
-    <h1>Thank you for your order, {{ username }}!</h1>
+    <div class="container">
+        <div class="card">
+            <div class="success-badge">🎉</div>
+            <h1>Payment Successful!</h1>
+            <p class="subtitle">Thank you for your order, <strong>{{ username }}</strong>!</p>
 
+            <div class="info-box">
+                <div class="info-title">Delivery Address</div>
+                <div class="info-content">{{ customer.address|default:"Your registered address" }}</div>
+            </div>
 
-    <h2>Delivery Address</h2>
-    <p>{{ customer.address }}</p>
+            <p style="color: #64748b; font-size: 0.9rem; margin-bottom: 1.5rem;">Your order has been placed and will be delivered shortly.</p>
 
-    <p>Your order will be delivered to this location shortly. Thank you for choosing Meal Mate!</p>
-
-    {% if cart_items %}
-        <a href="{% url 'customer_menu' cart_items.0.restaurant.id username %}">Back to Restaurants</a>
-    {% else %}
-        <a href="/">Back to Home</a>
-    {% endif %}
+            {% if cart_items and cart_items.0.restaurant %}
+                <a href="{% url 'view_menu' cart_items.0.restaurant.id username %}" class="btn-action">Back to Restaurant</a>
+            {% else %}
+                <a href="/" class="btn-action">Back to Home</a>
+            {% endif %}
+        </div>
+    </div>
 </body>
 </html>

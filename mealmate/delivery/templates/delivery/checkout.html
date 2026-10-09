@@ -84,7 +84,7 @@
             <form action="{% url 'verify_and_place_order' username %}" method="POST" id="razorpay-form">
                 {% csrf_token %}
                 <input type="hidden" name="razorpay_payment_id" id="razorpay_payment_id">
-                <input type="hidden" name="razorpay_order_id" id="razorpay_order_id">
+                <input type="hidden" name="razorpay_order_id" id="razorpay_order_id" value="{{ order_id }}">
                 <input type="hidden" name="razorpay_signature" id="razorpay_signature">
                 
                 <!-- Matching Button ID -->
@@ -100,24 +100,51 @@
     <script>
         var options = {
             "key": "{{ razorpay_key_id }}",
-            "amount": Math.round(parseFloat("{{ total_price }}") * 100),
+            "amount": {{ amount_in_paise|default:0 }},
             "currency": "INR",
             "name": "MealMate",
             "description": "Food Order Payment",
             "order_id": "{{ order_id }}",
+            "theme": { "color": "#4f46e5" },
+            "modal": {
+                "ondismiss": function() {
+                    console.log('Payment modal closed by user');
+                    var btn = document.getElementById('rzp-button1');
+                    if (btn) {
+                        btn.disabled = false;
+                        btn.innerHTML = '🔒 Pay with Razorpay';
+                    }
+                }
+            },
             "handler": function (response) {
+                var btn = document.getElementById('rzp-button1');
+                if (btn) {
+                    btn.disabled = true;
+                    btn.innerHTML = '⏳ Processing Order...';
+                }
                 document.getElementById('razorpay_payment_id').value = response.razorpay_payment_id;
-                document.getElementById('razorpay_order_id').value = response.razorpay_order_id;
+                document.getElementById('razorpay_order_id').value = response.razorpay_order_id || "{{ order_id }}";
                 document.getElementById('razorpay_signature').value = response.razorpay_signature;
                 document.getElementById('razorpay-form').submit();
-            },
-            "theme": { "color": "#4f46e5" }
+            }
         };
-        
-        var rzp1 = new Razorpay(options);
-        document.getElementById('rzp-button1').onclick = function(e){
-            rzp1.open();
-            e.preventDefault();
+
+        var payBtn = document.getElementById('rzp-button1');
+        if (payBtn) {
+            payBtn.onclick = function(e) {
+                e.preventDefault();
+                if (typeof Razorpay === 'undefined') {
+                    alert('Razorpay SDK is not loaded. Please check your internet connection.');
+                    return;
+                }
+                var rzp = new Razorpay(options);
+                rzp.on('payment.failed', function (resp) {
+                    alert('Payment Failed: ' + (resp.error ? resp.error.description : 'Transaction could not be completed.'));
+                    payBtn.disabled = false;
+                    payBtn.innerHTML = '🔒 Pay with Razorpay';
+                });
+                rzp.open();
+            };
         }
     </script>
     {% endif %}

@@ -131,3 +131,6 @@ MAILERS = {
 
 RAZORPAY_KEY_ID = 'rzp_test_Tgviii0ytSmkCJ'
 RAZORPAY_KEY_SECRET = '7WfvBqhQE8SsgayDVwjnGd2r'
+
+# Enable popups for payment gateways (e.g. Razorpay modal/3DS/UPI authentication windows)
+SECURE_CROSS_ORIGIN_OPENER_POLICY = 'same-origin-allow-popups'

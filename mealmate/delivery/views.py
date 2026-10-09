@@ -217,6 +217,7 @@ def checkout(request, username):
         'delivery/checkout.html',
         {
             'username': username,
+            'customer': customer,
             'cart_items': cart_items,
             'total_price': total_price,
             'razorpay_key_id': settings.RAZORPAY_KEY_ID,
