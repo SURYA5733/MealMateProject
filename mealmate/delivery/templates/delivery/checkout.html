@@ -11,6 +11,9 @@
         body { background: radial-gradient(circle at top left, #eef2ff, #f8fafc); color: #0f172a; min-height: 100vh; padding: 3rem 1.5rem; }
         
         .container { max-width: 520px; margin: 0 auto; }
+        .back-link { display: inline-flex; align-items: center; gap: 0.35rem; font-size: 0.85rem; font-weight: 700; color: #64748b; text-decoration: none; margin-bottom: 1.25rem; }
+        .back-link:hover { color: #0f172a; }
+
         .card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 24px; padding: 2.5rem; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05); }
         
         .header { text-align: center; margin-bottom: 2rem; }
@@ -18,7 +21,7 @@
         .header h1 { font-size: 1.75rem; font-weight: 800; color: #0f172a; margin-bottom: 0.25rem; }
         .header p { color: #64748b; font-size: 0.9rem; }
 
-        .error-box { background: #fee2e2; border: 1px solid #fca5a5; color: #b91c1c; padding: 1rem; border-radius: 12px; font-weight: 600; text-align: center; margin-bottom: 1.5rem; }
+        .error-box { background: #fee2e2; border: 1px solid #fca5a5; color: #b91c1c; padding: 1rem; border-radius: 12px; font-weight: 600; text-align: center; margin-bottom: 1.5rem; line-height: 1.5; font-size: 0.9rem; }
 
         .order-summary { background: #f8fafc; border: 1px solid #f1f5f9; border-radius: 16px; padding: 1.25rem; margin-bottom: 1.5rem; }
         .summary-title { font-size: 0.75rem; font-weight: 800; text-transform: uppercase; color: #64748b; letter-spacing: 0.05em; margin-bottom: 1rem; }
@@ -48,10 +51,27 @@
             gap: 0.5rem;
         }
         .btn-pay:hover { background: #4338ca; transform: translateY(-1px); }
+
+        .btn-secondary {
+            display: block;
+            width: 100%;
+            padding: 0.85rem;
+            background: #f1f5f9;
+            color: #475569;
+            border-radius: 12px;
+            font-weight: 700;
+            text-align: center;
+            text-decoration: none;
+            margin-top: 1rem;
+            transition: 0.2s;
+        }
+        .btn-secondary:hover { background: #e2e8f0; }
     </style>
 </head>
 <body>
     <div class="container">
+        <a href="{% url 'show_cart' username %}" class="back-link">← Back to Cart</a>
+
         <div class="card">
             <div class="header">
                 <div class="logo-badge">💳</div>
@@ -63,14 +83,15 @@
             <div class="error-box">
                 {{ error }}
             </div>
+            <a href="{% url 'show_cart' username %}" class="btn-secondary">Return to Cart</a>
             {% else %}
 
             <div class="order-summary">
                 <div class="summary-title">Items Ordered</div>
-                {% for item in cart_items %}
+                {% for ci in cart_items %}
                 <div class="order-item">
-                    <span>{{ item.name }}</span>
-                    <span>₹{{ item.price }}</span>
+                    <span>{{ ci.item.name }} <strong style="color: #4f46e5;">× {{ ci.quantity }}</strong></span>
+                    <span>₹{{ ci.subtotal }}</span>
                 </div>
                 {% endfor %}
 
@@ -80,16 +101,15 @@
                 </div>
             </div>
 
-            <!-- Hidden Form to submit payment verification parameters -->
+            <!-- Form to submit payment verification parameters -->
             <form action="{% url 'verify_and_place_order' username %}" method="POST" id="razorpay-form">
                 {% csrf_token %}
                 <input type="hidden" name="razorpay_payment_id" id="razorpay_payment_id">
                 <input type="hidden" name="razorpay_order_id" id="razorpay_order_id" value="{{ order_id }}">
                 <input type="hidden" name="razorpay_signature" id="razorpay_signature">
                 
-                <!-- Matching Button ID -->
                 <button type="button" id="rzp-button1" class="btn-pay">
-                    🔒 Pay with Razorpay
+                    🔒 Pay ₹{{ total_price }} with Razorpay
                 </button>
             </form>
             {% endif %}
@@ -112,7 +132,7 @@
                     var btn = document.getElementById('rzp-button1');
                     if (btn) {
                         btn.disabled = false;
-                        btn.innerHTML = '🔒 Pay with Razorpay';
+                        btn.innerHTML = '🔒 Pay ₹{{ total_price }} with Razorpay';
                     }
                 }
             },
@@ -141,7 +161,7 @@
                 rzp.on('payment.failed', function (resp) {
                     alert('Payment Failed: ' + (resp.error ? resp.error.description : 'Transaction could not be completed.'));
                     payBtn.disabled = false;
-                    payBtn.innerHTML = '🔒 Pay with Razorpay';
+                    payBtn.innerHTML = '🔒 Pay ₹{{ total_price }} with Razorpay';
                 });
                 rzp.open();
             };

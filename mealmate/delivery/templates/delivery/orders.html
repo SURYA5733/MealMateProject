@@ -3,44 +3,285 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">    
-    <title>Order Confirmed - MealMate</title>
+    <title>My Orders - MealMate</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
-        body { background: radial-gradient(circle at top left, #eef2ff, #f8fafc); color: #0f172a; min-height: 100vh; padding: 3rem 1.5rem; display: flex; align-items: center; justify-content: center; }
-        .container { max-width: 520px; width: 100%; margin: 0 auto; }
-        .card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 24px; padding: 2.5rem; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05); text-align: center; }
-        .success-badge { font-size: 3.5rem; margin-bottom: 1rem; animation: pop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        @keyframes pop { 0% { transform: scale(0.5); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
-        h1 { font-size: 1.6rem; font-weight: 800; color: #0f172a; margin-bottom: 0.5rem; }
-        .subtitle { color: #64748b; font-size: 0.95rem; margin-bottom: 1.5rem; }
-        .info-box { background: #f8fafc; border: 1px solid #f1f5f9; border-radius: 16px; padding: 1.25rem; margin-bottom: 1.5rem; text-align: left; }
-        .info-title { font-size: 0.75rem; font-weight: 800; text-transform: uppercase; color: #64748b; letter-spacing: 0.05em; margin-bottom: 0.5rem; }
-        .info-content { font-size: 0.95rem; font-weight: 600; color: #334155; }
-        .btn-action { display: inline-flex; align-items: center; justify-content: center; width: 100%; padding: 0.9rem; background: #4f46e5; color: #ffffff; text-decoration: none; border-radius: 12px; font-weight: 700; font-size: 0.95rem; transition: all 0.2s ease; box-shadow: 0 4px 14px rgba(79, 70, 229, 0.3); }
-        .btn-action:hover { background: #4338ca; transform: translateY(-1px); }
+        body { background: #f8fafc; color: #0f172a; min-height: 100vh; }
+        .navbar { background: #ffffff; border-bottom: 1px solid #e2e8f0; padding: 1.25rem 2rem; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 10; }
+        .logo { font-size: 1.35rem; font-weight: 800; color: #4f46e5; text-decoration: none; }
+        .nav-actions { display: flex; align-items: center; gap: 1.25rem; }
+        .nav-link { font-size: 0.9rem; font-weight: 700; color: #475569; text-decoration: none; transition: 0.2s; }
+        .nav-link:hover { color: #4f46e5; }
+        .cart-btn { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.55rem 1rem; background: #4f46e5; color: #ffffff; text-decoration: none; border-radius: 10px; font-weight: 700; font-size: 0.85rem; }
+        .badge-count { background: #ffffff; color: #4f46e5; border-radius: 999px; padding: 0.15rem 0.5rem; font-size: 0.75rem; font-weight: 800; }
+
+        /* User Dropdown at Last */
+        .user-dropdown { position: relative; display: inline-block; }
+        .user-dropdown-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+            background: #f1f5f9;
+            border: 1px solid #cbd5e1;
+            padding: 0.5rem 0.95rem;
+            border-radius: 999px;
+            font-size: 0.875rem;
+            font-weight: 700;
+            color: #334155;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: inherit;
+        }
+        .user-dropdown-btn:hover { background: #e2e8f0; border-color: #94a3b8; }
+        .dropdown-arrow { font-size: 0.75rem; color: #64748b; }
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: calc(100% + 0.5rem);
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 14px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+            min-width: 170px;
+            padding: 0.5rem;
+            z-index: 1000;
+        }
+        .dropdown-menu.show { display: block; }
+        .dropdown-user-info { padding: 0.5rem 0.75rem; }
+        .dropdown-user-name { font-weight: 800; font-size: 0.9rem; color: #0f172a; }
+        .dropdown-user-email { font-size: 0.75rem; color: #64748b; margin-top: 0.15rem; word-break: break-all; }
+        .dropdown-divider { height: 1px; background: #f1f5f9; margin: 0.35rem 0; }
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.55rem 0.75rem;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 700;
+            text-decoration: none;
+            transition: 0.15s;
+        }
+        .dropdown-item-danger { color: #ef4444; }
+        .dropdown-item-danger:hover { background: #fee2e2; }
+
+        .container { max-width: 860px; margin: 2rem auto; padding: 0 1.5rem; }
+        .back-link { display: inline-flex; align-items: center; gap: 0.35rem; font-size: 0.85rem; font-weight: 700; color: #64748b; text-decoration: none; margin-bottom: 1.25rem; }
+        .back-link:hover { color: #0f172a; }
+
+        .header { margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: flex-end; }
+        .header h1 { font-size: 1.85rem; font-weight: 800; color: #0f172a; }
+        .header p { color: #64748b; font-size: 0.95rem; margin-top: 0.25rem; }
+
+        .orders-list { display: flex; flex-direction: column; gap: 1.5rem; }
+        .order-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 20px;
+            padding: 1.75rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.03);
+            transition: all 0.2s ease;
+        }
+        .order-card:hover { box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.06); }
+        .order-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #f1f5f9;
+            padding-bottom: 1rem;
+            margin-bottom: 1.25rem;
+        }
+        .order-meta-id { font-size: 1.1rem; font-weight: 800; color: #0f172a; }
+        .order-meta-date { font-size: 0.825rem; color: #64748b; margin-top: 0.2rem; }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.35rem 0.75rem;
+            border-radius: 999px;
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+        .status-placed { background: #dcfce7; color: #15803d; }
+        .status-preparing { background: #fef3c7; color: #92400e; }
+        .status-delivery { background: #e0f2fe; color: #0284c7; }
+        .status-delivered { background: #f1f5f9; color: #334155; }
+
+        .order-items-table {
+            width: 100%;
+            margin-bottom: 1.25rem;
+        }
+        .order-item-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            font-size: 0.95rem;
+            color: #334155;
+            border-bottom: 1px dashed #f1f5f9;
+        }
+        .order-item-row:last-child { border-bottom: none; }
+        .order-item-name { font-weight: 600; }
+        .order-item-qty { color: #4f46e5; font-weight: 700; margin-left: 0.4rem; }
+        .order-item-subtotal { font-weight: 700; color: #0f172a; }
+
+        .order-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid #f1f5f9;
+            padding-top: 1rem;
+            background: #fafafa;
+            margin: 0 -1.75rem -1.75rem -1.75rem;
+            padding: 1rem 1.75rem;
+            border-bottom-left-radius: 20px;
+            border-bottom-right-radius: 20px;
+        }
+        .address-box { font-size: 0.85rem; color: #64748b; max-width: 60%; }
+        .address-box strong { color: #334155; display: block; margin-bottom: 0.2rem; }
+        .total-box { text-align: right; }
+        .total-box .total-label { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: #64748b; }
+        .total-box .total-price { font-size: 1.35rem; font-weight: 800; color: #4f46e5; }
+
+        .empty-state {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 24px;
+            padding: 3.5rem 2rem;
+            text-align: center;
+        }
+        .empty-icon { font-size: 3rem; margin-bottom: 1rem; }
+        .empty-state h3 { font-size: 1.4rem; font-weight: 800; margin-bottom: 0.5rem; }
+        .empty-state p { color: #64748b; margin-bottom: 1.5rem; font-size: 0.95rem; }
+        .btn-browse {
+            display: inline-block;
+            padding: 0.8rem 1.5rem;
+            background: #4f46e5;
+            color: #ffffff;
+            font-weight: 700;
+            border-radius: 12px;
+            text-decoration: none;
+            transition: 0.2s;
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25);
+        }
+        .btn-browse:hover { background: #4338ca; transform: translateY(-1px); }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="card">
-            <div class="success-badge">🎉</div>
-            <h1>Payment Successful!</h1>
-            <p class="subtitle">Thank you for your order, <strong>{{ username }}</strong>!</p>
+    <header class="navbar">
+        <a href="{% url 'customer_home' username %}" class="logo">🍽️ Meal Mate</a>
+        <div class="nav-actions">
+            <a href="{% url 'customer_home' username %}" class="nav-link">Restaurants</a>
+            <a href="{% url 'show_cart' username %}" class="cart-btn">
+                🛒 Cart
+                {% if cart_count > 0 %}
+                <span class="badge-count">{{ cart_count }}</span>
+                {% endif %}
+            </a>
 
-            <div class="info-box">
-                <div class="info-title">Delivery Address</div>
-                <div class="info-content">{{ customer.address|default:"Your registered address" }}</div>
+            <!-- User Dropdown at Last -->
+            <div class="user-dropdown">
+                <button type="button" class="user-dropdown-btn" onclick="toggleUserDropdown(event)">
+                    <span>👤 {{ username }}</span>
+                    <span class="dropdown-arrow">▾</span>
+                </button>
+                <div class="dropdown-menu" id="userDropdownMenu">
+                    <div class="dropdown-user-info">
+                        <div class="dropdown-user-name">{{ username }}</div>
+                        {% if customer.email %}
+                        <div class="dropdown-user-email">{{ customer.email }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="dropdown-divider"></div>
+                    <a href="{% url 'index' %}" class="dropdown-item dropdown-item-danger">
+                        <span>🚪 Sign Out</span>
+                    </a>
+                </div>
             </div>
-
-            <p style="color: #64748b; font-size: 0.9rem; margin-bottom: 1.5rem;">Your order has been placed and will be delivered shortly.</p>
-
-            {% if cart_items and cart_items.0.restaurant %}
-                <a href="{% url 'view_menu' cart_items.0.restaurant.id username %}" class="btn-action">Back to Restaurant</a>
-            {% else %}
-                <a href="/" class="btn-action">Back to Home</a>
-            {% endif %}
         </div>
-    </div>
+    </header>
+
+    <main class="container">
+        <a href="{% url 'customer_home' username %}" class="back-link">← Back to Restaurants</a>
+
+        <div class="header">
+            <div>
+                <h1>My Orders</h1>
+                <p>Order history and status for <strong>{{ username }}</strong></p>
+            </div>
+        </div>
+
+        <div class="orders-list">
+            {% for order in orders %}
+            <div class="order-card">
+                <div class="order-card-header">
+                    <div>
+                        <div class="order-meta-id">Order #{{ order.id }}</div>
+                        <div class="order-meta-date">{{ order.created_at|date:"M d, Y • h:i A" }}</div>
+                    </div>
+                    <div>
+                        {% if order.status == 'Placed' %}
+                            <span class="status-badge status-placed">● Order Placed</span>
+                        {% elif order.status == 'Preparing' %}
+                            <span class="status-badge status-preparing">🍳 Preparing</span>
+                        {% elif order.status == 'Out for Delivery' %}
+                            <span class="status-badge status-delivery">🛵 Out for Delivery</span>
+                        {% else %}
+                            <span class="status-badge status-delivered">✅ Delivered</span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="order-items-table">
+                    {% for item in order.order_items.all %}
+                    <div class="order-item-row">
+                        <span class="order-item-name">
+                            {{ item.item_name }}
+                            <span class="order-item-qty">× {{ item.quantity }}</span>
+                        </span>
+                        <span class="order-item-subtotal">₹{{ item.subtotal }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <div class="order-footer">
+                    <div class="address-box">
+                        <strong>Delivery Address</strong>
+                        {{ order.delivery_address }}
+                    </div>
+                    <div class="total-box">
+                        <div class="total-label">Total Paid</div>
+                        <div class="total-price">₹{{ order.total_amount }}</div>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="empty-state">
+                <div class="empty-icon">🧾</div>
+                <h3>No Orders Yet</h3>
+                <p>Looks like you haven't placed any orders yet. Choose a restaurant to get started!</p>
+                <a href="{% url 'customer_home' username %}" class="btn-browse">Browse Restaurants</a>
+            </div>
+            {% endfor %}
+        </div>
+    </main>
+
+    <script>
+        function toggleUserDropdown(event) {
+            event.stopPropagation();
+            var menu = document.getElementById('userDropdownMenu');
+            if (menu) {
+                menu.classList.toggle('show');
+            }
+        }
+        document.addEventListener('click', function(e) {
+            var menu = document.getElementById('userDropdownMenu');
+            if (menu && menu.classList.contains('show')) {
+                menu.classList.remove('show');
+            }
+        });
+    </script>
 </body>
 </html>

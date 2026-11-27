@@ -8,17 +8,71 @@
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
         body { background: #f8fafc; color: #0f172a; min-height: 100vh; }
-        .navbar { background: #ffffff; border-bottom: 1px solid #e2e8f0; padding: 1.25rem 2rem; display: flex; align-items: center; justify-content: space-between; }
+        .navbar { background: #ffffff; border-bottom: 1px solid #e2e8f0; padding: 1.25rem 2rem; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 10; }
         .logo { font-size: 1.35rem; font-weight: 800; color: #4f46e5; text-decoration: none; }
         .container { max-width: 1000px; margin: 2rem auto; padding: 0 1.5rem; }
+        .back-link { display: inline-flex; align-items: center; gap: 0.35rem; font-size: 0.85rem; font-weight: 700; color: #64748b; text-decoration: none; margin-bottom: 1.25rem; }
+        .back-link:hover { color: #0f172a; }
         
         .banner { background: linear-gradient(135deg, #4f46e5, #6366f1); color: #ffffff; border-radius: 20px; padding: 2rem; box-shadow: 0 10px 20px -5px rgba(79,70,229,0.25); margin-bottom: 2rem; }
         .banner h3 { font-size: 1.75rem; font-weight: 800; margin-bottom: 0.5rem; }
         .banner p { font-size: 1rem; opacity: 0.9; }
 
         .top-actions { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
-        .cart-link { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.5rem; background: #4f46e5; color: #fff; border-radius: 12px; text-decoration: none; font-weight: 700; box-shadow: 0 4px 12px rgba(79,70,229,0.2); transition: 0.2s; }
+        .cart-link { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.6rem 1.15rem; background: #4f46e5; color: #fff; border-radius: 12px; text-decoration: none; font-weight: 700; box-shadow: 0 4px 12px rgba(79,70,229,0.2); transition: 0.2s; font-size: 0.875rem; }
         .cart-link:hover { background: #4338ca; transform: translateY(-1px); }
+        .badge-count { background: #ffffff; color: #4f46e5; border-radius: 999px; padding: 0.15rem 0.5rem; font-size: 0.75rem; font-weight: 800; margin-left: 0.35rem; }
+
+        /* User Dropdown at Last */
+        .user-dropdown { position: relative; display: inline-block; }
+        .user-dropdown-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+            background: #f1f5f9;
+            border: 1px solid #cbd5e1;
+            padding: 0.5rem 0.95rem;
+            border-radius: 999px;
+            font-size: 0.875rem;
+            font-weight: 700;
+            color: #334155;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: inherit;
+        }
+        .user-dropdown-btn:hover { background: #e2e8f0; border-color: #94a3b8; }
+        .dropdown-arrow { font-size: 0.75rem; color: #64748b; }
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: calc(100% + 0.5rem);
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 14px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+            min-width: 170px;
+            padding: 0.5rem;
+            z-index: 1000;
+        }
+        .dropdown-menu.show { display: block; }
+        .dropdown-user-info { padding: 0.5rem 0.75rem; }
+        .dropdown-user-name { font-weight: 800; font-size: 0.9rem; color: #0f172a; }
+        .dropdown-user-email { font-size: 0.75rem; color: #64748b; margin-top: 0.15rem; word-break: break-all; }
+        .dropdown-divider { height: 1px; background: #f1f5f9; margin: 0.35rem 0; }
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.55rem 0.75rem;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 700;
+            text-decoration: none;
+            transition: 0.15s;
+        }
+        .dropdown-item-danger { color: #ef4444; }
+        .dropdown-item-danger:hover { background: #fee2e2; }
 
         .menu-list { display: flex; flex-direction: column; gap: 1rem; }
         .menu-item-card {
@@ -50,24 +104,89 @@
             text-decoration: none;
             transition: 0.2s;
             white-space: nowrap;
+            border: 1px solid #e0e7ff;
+            display: inline-flex;
+            align-items: center;
         }
         .btn-add-cart:hover { background: #4f46e5; color: #ffffff; }
+
+        .menu-qty-control {
+            display: inline-flex;
+            align-items: center;
+            background: #4f46e5;
+            border-radius: 10px;
+            padding: 0.25rem;
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25);
+        }
+        .btn-qty-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 30px;
+            height: 30px;
+            background: transparent;
+            color: #ffffff;
+            font-size: 1.15rem;
+            font-weight: 800;
+            text-decoration: none;
+            border-radius: 6px;
+            transition: 0.15s;
+            line-height: 1;
+        }
+        .btn-qty-btn:hover { background: rgba(255, 255, 255, 0.25); }
+        .menu-qty-val {
+            color: #ffffff;
+            font-weight: 800;
+            font-size: 0.95rem;
+            min-width: 30px;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
     <header class="navbar">
-        <a href="#" class="logo">🍽️ Meal Mate</a>
+        <a href="{% url 'customer_home' username %}" class="logo">🍽️ Meal Mate</a>
+        <div style="display: flex; align-items: center; gap: 1.25rem;">
+            <a href="{% url 'orders' username %}" style="text-decoration: none; font-size: 0.9rem; font-weight: 700; color: #475569;">📋 My Orders</a>
+            <a href="{% url 'show_cart' username %}" class="cart-link">
+                🛒 View Cart
+                {% if cart_count > 0 %}
+                <span class="badge-count">{{ cart_count }}</span>
+                {% endif %}
+            </a>
+
+            <!-- User Dropdown at Last -->
+            <div class="user-dropdown">
+                <button type="button" class="user-dropdown-btn" onclick="toggleUserDropdown(event)">
+                    <span>👤 {{ username }}</span>
+                    <span class="dropdown-arrow">▾</span>
+                </button>
+                <div class="dropdown-menu" id="userDropdownMenu">
+                    <div class="dropdown-user-info">
+                        <div class="dropdown-user-name">{{ username }}</div>
+                        {% if customer.email %}
+                        <div class="dropdown-user-email">{{ customer.email }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="dropdown-divider"></div>
+                    <a href="{% url 'index' %}" class="dropdown-item dropdown-item-danger">
+                        <span>🚪 Sign Out</span>
+                    </a>
+                </div>
+            </div>
+        </div>
     </header>
 
     <main class="container">
+        <a href="{% url 'customer_home' username %}" class="back-link">← Back to Restaurants</a>
+
         <div class="banner">
-            <h3>Welcome {{username}}! 👋</h3>
-            <p>Here’s the menu for <strong>{{restaurant.name}}</strong>. Add your favorite dishes to the cart.</p>
+            <h3>Menu: {{ restaurant.name }}</h3>
+            <p>Select delicious items and add them to your cart.</p>
         </div>
 
         <div class="top-actions">
-            <h2 style="font-size: 1.35rem; font-weight: 800;">Menu Items</h2>
-            <a href="{% url 'show_cart' username %}" class="cart-link">🛒 View Cart</a>
+            <h2 style="font-size: 1.35rem; font-weight: 800;">Available Items</h2>
         </div>
 
         <div class="menu-list">
@@ -86,12 +205,38 @@
                     <p class="item-desc">{{ item.description }}</p>
                     <div class="item-price">₹{{ item.price }}</div>
                 </div>
-                <a href="{% url 'add_to_cart' item.id username %}" class="btn-add-cart">+ Add to Cart</a>
+
+                <!-- Quantity Control on the Item Card -->
+                {% if item.cart_quantity > 0 %}
+                <div class="menu-qty-control">
+                    <a href="{% url 'decrease_cart_item' item.id username %}" class="btn-qty-btn" title="Decrease">−</a>
+                    <span class="menu-qty-val">{{ item.cart_quantity }}</span>
+                    <a href="{% url 'add_to_cart' item.id username %}" class="btn-qty-btn" title="Increase">+</a>
+                </div>
+                {% else %}
+                <a href="{% url 'add_to_cart' item.id username %}" class="btn-add-cart">+ Add</a>
+                {% endif %}
             </div>
             {% empty %}
             <p style="color: #64748b; text-align: center; padding: 2rem;">No items available in this menu yet.</p>
             {% endfor %}
         </div>
     </main>
+
+    <script>
+        function toggleUserDropdown(event) {
+            event.stopPropagation();
+            var menu = document.getElementById('userDropdownMenu');
+            if (menu) {
+                menu.classList.toggle('show');
+            }
+        }
+        document.addEventListener('click', function(e) {
+            var menu = document.getElementById('userDropdownMenu');
+            if (menu && menu.classList.contains('show')) {
+                menu.classList.remove('show');
+            }
+        });
+    </script>
 </body>
 </html>

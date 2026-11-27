@@ -9,7 +9,7 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
         body { background: #f8fafc; color: #0f172a; min-height: 100vh; padding: 2rem 1.5rem; }
         .container { max-width: 1100px; margin: 0 auto; }
-        .back-link { display: inline-block; font-size: 0.85rem; font-weight: 700; color: #64748b; text-decoration: none; margin-bottom: 1.25rem; }
+        .back-link { display: inline-flex; align-items: center; gap: 0.35rem; font-size: 0.85rem; font-weight: 700; color: #64748b; text-decoration: none; margin-bottom: 1.25rem; }
         .back-link:hover { color: #0f172a; }
         
         .layout-grid { display: grid; grid-template-columns: 360px 1fr; gap: 2rem; align-items: start; }
@@ -17,6 +17,8 @@
 
         .card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 18px; padding: 1.75rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.03); }
         h2 { font-size: 1.35rem; font-weight: 800; color: #0f172a; margin-bottom: 1.25rem; }
+
+        .alert-error { background: #fee2e2; border: 1px solid #fca5a5; color: #b91c1c; padding: 0.75rem 1rem; border-radius: 12px; font-size: 0.875rem; font-weight: 600; margin-bottom: 1.25rem; }
 
         .form-group { margin-bottom: 1.15rem; }
         label { display: block; font-size: 0.825rem; font-weight: 700; color: #334155; margin-bottom: 0.4rem; }
@@ -39,16 +41,25 @@
         .thumb { width: 48px; height: 48px; object-fit: cover; border-radius: 8px; background: #f1f5f9; }
         .badge-veg { color: #15803d; background: #dcfce7; padding: 0.25rem 0.55rem; border-radius: 6px; font-size: 0.75rem; font-weight: 700; }
         .badge-nonveg { color: #b91c1c; background: #fee2e2; padding: 0.25rem 0.55rem; border-radius: 6px; font-size: 0.75rem; font-weight: 700; }
+        .link-delete { color: #b91c1c; background: #fee2e2; padding: 0.35rem 0.65rem; border-radius: 6px; font-size: 0.8rem; font-weight: 700; text-decoration: none; transition: 0.2s; }
+        .link-delete:hover { background: #fca5a5; }
     </style>
 </head>
 <body>
     <div class="container">
-        <a href="javascript:history.back()" class="back-link">← Back</a>
+        <a href="{% url 'open_show_restaurant' %}" class="back-link">← Back to Restaurants</a>
 
         <div class="layout-grid">
             <!-- Add Item Form -->
             <div class="card">
                 <h2>Add Menu Item</h2>
+
+                {% if error %}
+                <div class="alert-error">
+                    {{ error }}
+                </div>
+                {% endif %}
+
                 <form action="{% url 'update_menu' restaurant.id %}" method="post">
                     {% csrf_token %}
                     <div class="form-group">
@@ -85,6 +96,7 @@
                             <th>Description</th>
                             <th>Price</th>
                             <th>Diet</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -103,10 +115,13 @@
                                     <span class="badge-nonveg">Non-Veg</span>
                                 {% endif %}
                             </td>
+                            <td>
+                                <a href="{% url 'delete_item' item.id %}" class="link-delete" onclick="return confirm('Delete this menu item?')">Delete</a>
+                            </td>
                         </tr>
                         {% empty %}
                         <tr>
-                            <td colspan="5" style="text-align: center; color: #94a3b8; padding: 3rem;">No menu items added yet.</td>
+                            <td colspan="6" style="text-align: center; color: #94a3b8; padding: 2.5rem;">No items in this menu yet. Add one from the form!</td>
                         </tr>
                         {% endfor %}
                     </tbody>

@@ -9,9 +9,13 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
         body { background: radial-gradient(circle at top left, #eef2ff, #f8fafc); color: #0f172a; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 1.5rem; }
         .card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 24px; padding: 2.5rem 2rem; max-width: 420px; width: 100%; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05); }
-        .header { text-align: center; margin-bottom: 2rem; }
+        .back-link { display: inline-flex; align-items: center; gap: 0.35rem; font-size: 0.85rem; font-weight: 700; color: #64748b; text-decoration: none; margin-bottom: 1.25rem; }
+        .back-link:hover { color: #0f172a; }
+        .header { text-align: center; margin-bottom: 1.75rem; }
         .header h3 { font-size: 1.75rem; font-weight: 800; color: #0f172a; margin-bottom: 0.35rem; }
         .header p.subtitle { color: #64748b; font-size: 0.9rem; }
+        .alert-error { background: #fee2e2; border: 1px solid #fca5a5; color: #b91c1c; padding: 0.75rem 1rem; border-radius: 12px; font-size: 0.875rem; font-weight: 600; margin-bottom: 1.25rem; }
+        .alert-success { background: #dcfce7; border: 1px solid #86efac; color: #15803d; padding: 0.75rem 1rem; border-radius: 12px; font-size: 0.875rem; font-weight: 600; margin-bottom: 1.25rem; }
         .form-group { margin-bottom: 1.25rem; }
         label { display: block; font-size: 0.825rem; font-weight: 700; color: #334155; margin-bottom: 0.5rem; letter-spacing: 0.01em; }
         input { width: 100%; padding: 0.75rem 1rem; border: 1px solid #cbd5e1; border-radius: 12px; font-size: 0.95rem; outline: none; transition: all 0.2s; background: #f8fafc; }
@@ -25,10 +29,23 @@
 </head>
 <body>
     <div class="card">
+        <a href="{% url 'index' %}" class="back-link">← Home</a>
         <div class="header">
             <h3>Welcome Back</h3>
             <p class="subtitle">Please enter your credentials to sign in</p>
         </div>
+
+        {% if error %}
+        <div class="alert-error">
+            {{ error }}
+        </div>
+        {% endif %}
+
+        {% if success %}
+        <div class="alert-success">
+            {{ success }}
+        </div>
+        {% endif %}
 
         <form action="{% url 'signin' %}" method="post">
             {% csrf_token %}
@@ -44,7 +61,7 @@
         </form>
 
         <div class="footer-link">
-            Don't have an account? <a href="open_signup">Sign Up</a>
+            Don't have an account? <a href="{% url 'open_signup' %}">Sign Up</a>
         </div>
     </div>
 </body>

@@ -22,7 +22,7 @@
 </head>
 <body>
     <div class="card">
-        <a href="javascript:history.back()" class="back-link">← Back</a>
+        <a href="{% url 'open_show_restaurant' %}" class="back-link">← Back to Restaurants</a>
         <h2>Update Restaurant Info</h2>
 
         <form action="{% url 'update_restaurant' restaurant.id %}" method="post">

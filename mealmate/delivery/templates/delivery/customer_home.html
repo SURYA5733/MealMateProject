@@ -8,8 +8,66 @@
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
         body { background: #f8fafc; color: #0f172a; min-height: 100vh; }
-        .navbar { background: #ffffff; border-bottom: 1px solid #e2e8f0; padding: 1.25rem 2rem; display: flex; align-items: center; justify-content: space-between; sticky: top; z-index: 10; }
+        .navbar { background: #ffffff; border-bottom: 1px solid #e2e8f0; padding: 1.25rem 2rem; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 10; }
         .logo { font-size: 1.35rem; font-weight: 800; color: #4f46e5; text-decoration: none; display: flex; align-items: center; gap: 0.5rem; }
+        .nav-actions { display: flex; align-items: center; gap: 1.25rem; }
+        .nav-link { font-size: 0.9rem; font-weight: 700; color: #475569; text-decoration: none; transition: 0.2s; }
+        .nav-link:hover { color: #4f46e5; }
+        .cart-btn { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.6rem 1.15rem; background: #4f46e5; color: #ffffff; text-decoration: none; border-radius: 10px; font-weight: 700; font-size: 0.85rem; transition: 0.2s; box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2); }
+        .cart-btn:hover { background: #4338ca; }
+        .badge-count { background: #ffffff; color: #4f46e5; border-radius: 999px; padding: 0.15rem 0.5rem; font-size: 0.75rem; font-weight: 800; }
+
+        /* User Dropdown at Last */
+        .user-dropdown { position: relative; display: inline-block; }
+        .user-dropdown-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+            background: #f1f5f9;
+            border: 1px solid #cbd5e1;
+            padding: 0.5rem 0.95rem;
+            border-radius: 999px;
+            font-size: 0.875rem;
+            font-weight: 700;
+            color: #334155;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: inherit;
+        }
+        .user-dropdown-btn:hover { background: #e2e8f0; border-color: #94a3b8; }
+        .dropdown-arrow { font-size: 0.75rem; color: #64748b; }
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: calc(100% + 0.5rem);
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 14px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+            min-width: 170px;
+            padding: 0.5rem;
+            z-index: 1000;
+        }
+        .dropdown-menu.show { display: block; }
+        .dropdown-user-info { padding: 0.5rem 0.75rem; }
+        .dropdown-user-name { font-weight: 800; font-size: 0.9rem; color: #0f172a; }
+        .dropdown-user-email { font-size: 0.75rem; color: #64748b; margin-top: 0.15rem; word-break: break-all; }
+        .dropdown-divider { height: 1px; background: #f1f5f9; margin: 0.35rem 0; }
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.55rem 0.75rem;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 700;
+            text-decoration: none;
+            transition: 0.15s;
+        }
+        .dropdown-item-danger { color: #ef4444; }
+        .dropdown-item-danger:hover { background: #fee2e2; }
+
         .container { max-width: 1100px; margin: 2rem auto; padding: 0 1.5rem; }
         
         .banner {
@@ -65,13 +123,42 @@
 </head>
 <body>
     <header class="navbar">
-        <a href="#" class="logo"><span>🍽️</span> Meal Mate</a>
+        <a href="{% url 'customer_home' username %}" class="logo"><span>🍽️</span> Meal Mate</a>
+        <div class="nav-actions">
+            <a href="{% url 'orders' username %}" class="nav-link">📋 My Orders</a>
+            <a href="{% url 'show_cart' username %}" class="cart-btn">
+                🛒 Cart
+                {% if cart_count > 0 %}
+                <span class="badge-count">{{ cart_count }}</span>
+                {% endif %}
+            </a>
+            
+            <!-- User Dropdown at Last -->
+            <div class="user-dropdown">
+                <button type="button" class="user-dropdown-btn" onclick="toggleUserDropdown(event)">
+                    <span>👤 {{ username }}</span>
+                    <span class="dropdown-arrow">▾</span>
+                </button>
+                <div class="dropdown-menu" id="userDropdownMenu">
+                    <div class="dropdown-user-info">
+                        <div class="dropdown-user-name">{{ username }}</div>
+                        {% if customer.email %}
+                        <div class="dropdown-user-email">{{ customer.email }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="dropdown-divider"></div>
+                    <a href="{% url 'index' %}" class="dropdown-item dropdown-item-danger">
+                        <span>🚪 Sign Out</span>
+                    </a>
+                </div>
+            </div>
+        </div>
     </header>
 
     <main class="container">
         <div class="banner">
-            <h3>Welcome {{username}}! 👋</h3>
-            <p>Explore top partner restaurants and order your favorites today.</p>
+            <h3>Welcome {{ username }}! 👋</h3>
+            <p>Explore top partner restaurants and order your favorite food today.</p>
         </div>
 
         <h2 class="section-title">Popular Restaurants</h2>
@@ -96,5 +183,21 @@
             {% endfor %}
         </div>
     </main>
+
+    <script>
+        function toggleUserDropdown(event) {
+            event.stopPropagation();
+            var menu = document.getElementById('userDropdownMenu');
+            if (menu) {
+                menu.classList.toggle('show');
+            }
+        }
+        document.addEventListener('click', function(e) {
+            var menu = document.getElementById('userDropdownMenu');
+            if (menu && menu.classList.contains('show')) {
+                menu.classList.remove('show');
+            }
+        });
+    </script>
 </body>
 </html>

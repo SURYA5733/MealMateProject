@@ -10,11 +10,22 @@
         body { background: #f8fafc; color: #0f172a; min-height: 100vh; }
         .navbar { background: #ffffff; border-bottom: 1px solid #e2e8f0; padding: 1.25rem 2rem; display: flex; align-items: center; justify-content: space-between; }
         .logo { font-size: 1.35rem; font-weight: 800; color: #4f46e5; text-decoration: none; }
-        .container { max-width: 900px; margin: 3rem auto; padding: 0 1.5rem; }
+        .nav-links { display: flex; align-items: center; gap: 1rem; }
+        .btn-signout { padding: 0.5rem 1rem; border-radius: 8px; font-size: 0.85rem; font-weight: 700; color: #ef4444; border: 1px solid #fecaca; background: #fff5f5; text-decoration: none; transition: 0.2s; }
+        .btn-signout:hover { background: #fee2e2; }
+
+        .container { max-width: 960px; margin: 3rem auto; padding: 0 1.5rem; }
         .header { margin-bottom: 2.5rem; text-align: center; }
         .header h3 { font-size: 2rem; font-weight: 800; color: #0f172a; margin-bottom: 0.5rem; }
         .header p { color: #64748b; font-size: 1rem; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.75rem; }
+
+        .stats-bar { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 2.5rem; }
+        @media (max-width: 768px) { .stats-bar { grid-template-columns: repeat(2, 1fr); } }
+        .stat-card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 1.25rem; text-align: center; }
+        .stat-num { font-size: 1.75rem; font-weight: 800; color: #4f46e5; }
+        .stat-label { font-size: 0.825rem; color: #64748b; font-weight: 600; margin-top: 0.25rem; }
+
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.75rem; margin-bottom: 3rem; }
         .card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 20px; padding: 2.25rem; display: flex; flex-direction: column; justify-content: space-between; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.03); transition: all 0.25s ease; }
         .card:hover { transform: translateY(-3px); box-shadow: 0 12px 20px -5px rgba(0, 0, 0, 0.08); }
         .card-icon { font-size: 2.5rem; margin-bottom: 1.25rem; background: #f1f5f9; width: 64px; height: 64px; border-radius: 16px; display: flex; align-items: center; justify-content: center; }
@@ -25,17 +36,48 @@
         .btn-primary:hover { background: #4338ca; }
         .btn-secondary { background: #0f172a; color: #fff; }
         .btn-secondary:hover { background: #1e293b; }
+
+        .recent-section { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 20px; padding: 1.75rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.03); }
+        .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; }
+        .section-header h4 { font-size: 1.2rem; font-weight: 800; color: #0f172a; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
+        th { text-align: left; padding: 0.75rem 1rem; color: #64748b; font-size: 0.75rem; text-transform: uppercase; font-weight: 700; border-bottom: 1px solid #e2e8f0; }
+        td { padding: 0.85rem 1rem; border-bottom: 1px solid #f1f5f9; vertical-align: middle; }
+        .badge-status { padding: 0.25rem 0.6rem; border-radius: 999px; font-size: 0.75rem; font-weight: 700; }
+        .badge-placed { background: #dcfce7; color: #15803d; }
     </style>
 </head>
 <body>
     <header class="navbar">
-        <a href="#" class="logo">🍽️ Meal Mate Admin</a>
+        <a href="{% url 'admin_home' %}" class="logo">🍽️ Meal Mate Admin</a>
+        <div class="nav-links">
+            <a href="{% url 'index' %}" class="btn-signout">Sign Out</a>
+        </div>
     </header>
 
     <main class="container">
         <div class="header">
             <h3>Admin Dashboard</h3>
-            <p>Manage partner restaurants, update catalogs, and structure menus.</p>
+            <p>Manage partner restaurants, update catalogs, and monitor orders.</p>
+        </div>
+
+        <div class="stats-bar">
+            <div class="stat-card">
+                <div class="stat-num">{{ restaurant_count|default:0 }}</div>
+                <div class="stat-label">Restaurants</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-num">{{ item_count|default:0 }}</div>
+                <div class="stat-label">Menu Items</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-num">{{ customer_count|default:0 }}</div>
+                <div class="stat-label">Customers</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-num">{{ order_count|default:0 }}</div>
+                <div class="stat-label">Orders Placed</div>
+            </div>
         </div>
 
         <div class="grid">
@@ -45,7 +87,7 @@
                     <div class="card-title">Add Restaurant</div>
                     <div class="card-desc">Register a new partner restaurant and configure setup settings.</div>
                 </div>
-                <a href="open_add_restaurant" class="btn btn-primary">ADD NEW RESTAURANT</a>
+                <a href="{% url 'open_add_restaurant' %}" class="btn btn-primary">ADD NEW RESTAURANT</a>
             </div>
 
             <div class="card">
@@ -54,9 +96,39 @@
                     <div class="card-title">Show Restaurants</div>
                     <div class="card-desc">View existing partner listings, update menus, or modify details.</div>
                 </div>
-                <a href="open_show_restaurant" class="btn btn-secondary">SHOW RESTAURANTS</a>
+                <a href="{% url 'open_show_restaurant' %}" class="btn btn-secondary">SHOW RESTAURANTS</a>
             </div>
         </div>
+
+        {% if recent_orders %}
+        <div class="recent-section">
+            <div class="section-header">
+                <h4>Recent Customer Orders</h4>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Order #</th>
+                        <th>Customer</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for o in recent_orders %}
+                    <tr>
+                        <td><strong>#{{ o.id }}</strong></td>
+                        <td>{{ o.customer.username }}</td>
+                        <td><strong>₹{{ o.total_amount }}</strong></td>
+                        <td><span class="badge-status badge-placed">{{ o.status }}</span></td>
+                        <td style="color: #64748b;">{{ o.created_at|date:"M d, h:i A" }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% endif %}
     </main>
 </body>
 </html>

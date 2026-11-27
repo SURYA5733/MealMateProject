@@ -12,6 +12,7 @@
         .back-link { display: inline-flex; align-items: center; gap: 0.35rem; font-size: 0.85rem; font-weight: 700; color: #64748b; text-decoration: none; margin-bottom: 1.25rem; }
         .back-link:hover { color: #0f172a; }
         h2 { font-size: 1.5rem; font-weight: 800; color: #0f172a; margin-bottom: 1.5rem; }
+        .alert-error { background: #fee2e2; border: 1px solid #fca5a5; color: #b91c1c; padding: 0.75rem 1rem; border-radius: 12px; font-size: 0.875rem; font-weight: 600; margin-bottom: 1.25rem; }
         .form-group { margin-bottom: 1.25rem; }
         label { display: block; font-size: 0.825rem; font-weight: 700; color: #334155; margin-bottom: 0.4rem; }
         input { width: 100%; padding: 0.7rem 0.9rem; border: 1px solid #cbd5e1; border-radius: 10px; font-size: 0.9rem; outline: none; transition: 0.2s; background: #f8fafc; }
@@ -22,8 +23,14 @@
 </head>
 <body>
     <div class="card">
-        <a href="open_show_restaurant" class="back-link">← Back to Restaurants</a>
+        <a href="{% url 'open_show_restaurant' %}" class="back-link">← Back to Restaurants</a>
         <h2>Add New Restaurant</h2>
+
+        {% if error %}
+        <div class="alert-error">
+            {{ error }}
+        </div>
+        {% endif %}
 
         <form action="{% url 'add_restaurant' %}" method="post">
             {% csrf_token %}
